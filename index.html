@@ -1019,7 +1019,7 @@
       }
       const checkoutLines = [
         "Naima Design Checkout",
-        ...cart.map((item) => `- ${item.name} | Qty: ${item.qty} | Amount: $${item.price * item.qty}`),
+        ...cart.map((item) => `- Product: ${item.name} | Qty: ${item.qty} | Unit Price: $${item.price} | Line Total: $${item.price * item.qty}`),
         `Total Amount: $${total}`
       ];
       cart.forEach((item) => {
