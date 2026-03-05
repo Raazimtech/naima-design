@@ -145,18 +145,17 @@
     .nav {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start;
+      justify-content: flex-end;
       align-items: center;
       gap: 8px;
-      width: 100%;
     }
 
     .hero {
-      min-height: auto;
-      margin-top: 92px;
+      min-height: 100vh;
+      margin-top: 62px;
       padding: clamp(14px, 2.4vw, 24px);
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 20px;
       align-items: stretch;
       max-width: 1220px;
@@ -287,7 +286,7 @@
 
     .cards {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -402,7 +401,7 @@
       background: #fff;
       color: var(--cocoa);
       cursor: pointer;
-      margin-left: auto;
+      margin-left: 8px;
     }
 
     .card {
@@ -544,33 +543,69 @@
       font-size: 0.95rem;
     }
 
-    @media (min-width: 641px) {
+    @media (max-width: 960px) {
       .topbar {
-        padding: 10px 16px;
+        position: sticky;
       }
 
-      .nav {
-        width: auto;
+      .hero {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+        min-height: auto;
+      }
+
+      .hero-left {
+        min-height: 420px;
       }
 
       .cards {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-
-      .cart-btn {
-        margin-left: 8px;
-      }
     }
 
-    @media (min-width: 1025px) {
-      .hero {
-        min-height: 100vh;
-        margin-top: 62px;
-        grid-template-columns: 1.05fr 0.95fr;
+    @media (max-width: 560px) {
+      .topbar {
+        padding: 10px 12px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .nav a {
+        margin-left: 0;
+        font-size: 0.86rem;
+      }
+
+      .cart-btn {
+        margin-left: auto;
       }
 
       .cards {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left {
+        padding: 24px;
+      }
+
+      .logo-box {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .cart-drawer {
+        width: 100%;
+        right: -100%;
+      }
+
+      .modal-actions .btn {
+        flex: 1 1 100%;
       }
     }
 
@@ -1019,7 +1054,1085 @@
       }
       const checkoutLines = [
         "Naima Design Checkout",
-        ...cart.map((item) => `- Product: ${item.name} | Qty: ${item.qty} | Unit Price: $${item.price} | Line Total: $${item.price * item.qty}`),
+        ...cart.map((item) => `- ${item.name} | Qty: ${item.qty} | Amount: $${item.price * item.qty}`),
+        `Total Amount: $${total}`
+      ];
+      cart.forEach((item) => {
+        purchased.unshift({
+          name: item.name,
+          qty: item.qty,
+          total: item.price * item.qty
+        });
+      });
+      cart.splice(0, cart.length);
+      renderCart();
+      renderPurchased();
+      saveState();
+      openWhatsAppOrder(checkoutLines);
+    });
+
+    loadState();
+    renderCart();
+    renderPurchased();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Naima Design offers elegant abayas and hijabs with modern modest style. Shop curated collections with easy WhatsApp ordering." />
+  <meta name="keywords" content="Naima Design, abaya, hijab, modest fashion, abayas online, hijabs online, Somali fashion" />
+  <meta name="author" content="Naima Design" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="theme-color" content="#ba6f45" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="canonical" href="https://naima-design.com/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Naima Design | Abayas & Hijabs" />
+  <meta property="og:description" content="Shop beautiful abayas and hijabs from Naima Design with quick WhatsApp checkout." />
+  <meta property="og:url" content="https://naima-design.com/" />
+  <meta property="og:image" content="https://naima-design.com/splash.png" />
+  <meta property="og:site_name" content="Naima Design" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Naima Design | Abayas & Hijabs" />
+  <meta name="twitter:description" content="Elegant modest fashion by Naima Design. Discover abayas and hijabs with WhatsApp ordering." />
+  <meta name="twitter:image" content="https://naima-design.com/splash.png" />
+
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>Naima Design | Abayas & Hijabs</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ClothingStore",
+      "name": "Naima Design",
+      "url": "https://naima-design.com/",
+      "image": "https://naima-design.com/logo.png",
+      "description": "Naima Design offers elegant abayas and hijabs with modern modest style.",
+      "telephone": "+252637762739",
+      "sameAs": [
+        "https://wa.me/252637762739"
+      ],
+      "makesOffer": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Abayas"
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "Hijabs"
+          }
+        }
+      ]
+    }
+  </script>
+  <style>
+    :root {
+      --cream: #f4efe6;
+      --sand: #e6d5bf;
+      --cocoa: #2c1d16;
+      --terracotta: #ba6f45;
+      --rose: #f7e6db;
+      --muted: #6e5b52;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(232, 145, 92, 0.18) 0%, rgba(232, 145, 92, 0) 34%),
+        radial-gradient(circle at 88% 22%, rgba(125, 167, 196, 0.18) 0%, rgba(125, 167, 196, 0) 30%),
+        radial-gradient(circle at 25% 84%, rgba(171, 136, 178, 0.16) 0%, rgba(171, 136, 178, 0) 32%),
+        radial-gradient(circle at 82% 82%, rgba(230, 171, 115, 0.16) 0%, rgba(230, 171, 115, 0) 34%),
+        radial-gradient(circle at top right, #fff9f3 0%, var(--cream) 52%, #eadbc8 100%);
+      color: var(--cocoa);
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(120deg, rgba(255, 255, 255, 0.22) 0 12%, transparent 12% 100%),
+        linear-gradient(300deg, rgba(255, 255, 255, 0.16) 0 8%, transparent 8% 100%);
+      background-size: 340px 340px, 280px 280px;
+      opacity: 0.28;
+      z-index: -1;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(68, 39, 25, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: max(10px, env(safe-area-inset-top));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid var(--sand);
+      background: #fff;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: var(--cocoa);
+      margin-left: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero {
+      min-height: 100vh;
+      margin-top: 62px;
+      padding: clamp(14px, 2.4vw, 24px);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 20px;
+      align-items: stretch;
+      max-width: 1220px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-left {
+      background:
+        linear-gradient(165deg, rgba(38, 22, 15, 0.65), rgba(38, 22, 15, 0.2)),
+        url("splash.png") center/cover no-repeat;
+      border-radius: 24px;
+      min-height: clamp(320px, 58vh, 560px);
+      padding: clamp(20px, 3vw, 36px);
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      color: var(--white);
+      box-shadow: 0 18px 34px rgba(44, 29, 22, 0.22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left::before,
+    .hero-left::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+    }
+
+    .hero-left::before {
+      width: 210px;
+      height: 210px;
+      top: -65px;
+      right: -65px;
+      background: radial-gradient(circle, rgba(255, 214, 176, 0.42) 0%, rgba(255, 214, 176, 0) 70%);
+    }
+
+    .hero-left::after {
+      width: 180px;
+      height: 180px;
+      left: -55px;
+      bottom: -55px;
+      background: radial-gradient(circle, rgba(170, 205, 229, 0.36) 0%, rgba(170, 205, 229, 0) 72%);
+    }
+
+    .hero-left h1 {
+      font-size: clamp(2.1rem, 5vw, 4rem);
+      line-height: 1.05;
+      margin-bottom: 10px;
+      max-width: 620px;
+    }
+
+    .hero-left p {
+      max-width: 520px;
+      font-size: 1.04rem;
+      color: #f7e8d8;
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid #eadaca;
+      box-shadow: 0 8px 20px rgba(61, 39, 27, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      right: -40px;
+      top: -40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(186, 111, 69, 0.18) 0%, rgba(186, 111, 69, 0) 72%);
+      pointer-events: none;
+    }
+
+    .logo-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-box img {
+      width: 74px;
+      height: 74px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 50%;
+      border: 2px solid var(--sand);
+      padding: 8px;
+    }
+
+    .panel h2 {
+      font-size: 1.55rem;
+      margin-bottom: 6px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .collection {
+      padding: 30px clamp(14px, 2.4vw, 24px) 64px;
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    .section-head {
+      margin-bottom: 18px;
+    }
+
+    .section-head h3 {
+      font-size: clamp(1.55rem, 3vw, 2.1rem);
+      margin-bottom: 4px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid #ecdccc;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      bottom: -28px;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(190, 136, 104, 0.16) 0%, rgba(190, 136, 104, 0) 70%);
+      pointer-events: none;
+    }
+
+    .card img {
+      width: 100%;
+      height: clamp(170px, 24vw, 230px);
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid #efdfcf;
+    }
+
+    .extra-abaya {
+      display: none;
+    }
+
+    .extra-abaya.show {
+      display: block;
+    }
+
+    .extra-hijab {
+      display: none;
+    }
+
+    .extra-hijab.show {
+      display: block;
+    }
+
+    .chip {
+      display: inline-block;
+      background: var(--rose);
+      color: #914f2d;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .card h4 {
+      margin-bottom: 5px;
+      font-size: 1.04rem;
+    }
+
+    .price {
+      margin-top: 8px;
+      color: var(--terracotta);
+      font-weight: 800;
+    }
+
+    .cta {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      min-height: 42px;
+    }
+
+    .btn-main {
+      background: var(--terracotta);
+      color: #fff;
+    }
+
+    .btn-alt {
+      background: #f0dfca;
+      color: var(--cocoa);
+    }
+
+    .view-all-wrap {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .btn-view-all {
+      border: 1px solid #d9bda6;
+      background: #fff;
+      color: var(--cocoa);
+      cursor: pointer;
+    }
+
+    .cart-btn {
+      border: 1px solid #d9bda6;
+      background: #fff;
+      color: var(--cocoa);
+      cursor: pointer;
+      margin-left: 8px;
+    }
+
+    .card {
+      cursor: pointer;
+    }
+
+    .product-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 16, 10, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+
+    .product-modal.show {
+      display: flex;
+    }
+
+    .product-modal-box {
+      width: min(460px, 100%);
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid #ecdccc;
+      max-height: 92vh;
+      overflow: auto;
+    }
+
+    .product-modal-box h4 {
+      font-size: 1.25rem;
+      margin-bottom: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: min(420px, 100%);
+      height: 100vh;
+      background: #fff;
+      border-left: 1px solid #eadaca;
+      box-shadow: -8px 0 20px rgba(0, 0, 0, 0.14);
+      z-index: 70;
+      transition: right 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      max-width: 100vw;
+    }
+
+    .cart-drawer.show {
+      right: 0;
+    }
+
+    .no-scroll {
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .cart-head {
+      padding: 16px;
+      border-bottom: 1px solid #f0e3d7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-items {
+      flex: 1;
+      overflow: auto;
+      padding: 12px 16px;
+    }
+
+    .cart-item {
+      border: 1px solid #ecdccc;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .qty-controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .qty-btn, .close-btn {
+      border: 1px solid #d9bda6;
+      background: #fff;
+      color: var(--cocoa);
+      border-radius: 8px;
+      padding: 3px 8px;
+      cursor: pointer;
+    }
+
+    .cart-foot {
+      border-top: 1px solid #f0e3d7;
+      padding: 14px 16px;
+    }
+
+    .purchased-wrap {
+      border-top: 1px solid #f0e3d7;
+      padding: 12px 16px;
+      max-height: 180px;
+      overflow: auto;
+    }
+
+    .purchased-item {
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+      padding: 8px;
+      border: 1px solid #ecdccc;
+      border-radius: 10px;
+      background: #fffaf5;
+    }
+
+    footer {
+      border-top: 1px solid #e6d6c6;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 960px) {
+      .topbar {
+        position: sticky;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+        min-height: auto;
+      }
+
+      .hero-left {
+        min-height: 420px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar {
+        padding: 10px 12px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .nav a {
+        margin-left: 0;
+        font-size: 0.86rem;
+      }
+
+      .cart-btn {
+        margin-left: auto;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left {
+        padding: 24px;
+      }
+
+      .logo-box {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .cart-drawer {
+        width: 100%;
+        right: -100%;
+      }
+
+      .modal-actions .btn {
+        flex: 1 1 100%;
+      }
+    }
+
+    @media (max-height: 500px) and (orientation: landscape) {
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-left {
+        min-height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="Naima Design logo" />
+      <span>NAIMA DESIGN</span>
+    </div>
+    <nav class="nav">
+      <a href="#new">New</a>
+      <a href="#abayas">Abayas</a>
+      <a href="#hijabs">Hijabs</a>
+      <button class="btn cart-btn" id="cart-open-btn" type="button">Cart (0)</button>
+    </nav>
+  </header>
+
+  <section class="hero" id="new">
+    <div class="hero-left">
+      <h1>Abayas and Dresses with Quiet Luxury</h1>
+      <p>Signature pieces for women who want modest elegance and modern detail in every look.</p>
+    </div>
+
+    <div class="hero-right">
+      <article class="panel">
+        <div class="logo-box">
+          <img src="logo.png" alt="Naima Design emblem" />
+          <div>
+            <h2>Naima Design</h2>
+            <p class="muted">Crafted collections for everyday grace and occasion wear.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h2>Now Showing</h2>
+        <p class="muted">Fresh silhouettes, delicate embroidery, and elevated fabrics for this season.</p>
+        <div class="cta">
+          <a href="#abayas" class="btn btn-main">Shop Abayas</a>
+          <a href="#hijabs" class="btn btn-alt">Shop Hijabs</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <main class="collection">
+    <section id="abayas">
+      <div class="section-head">
+        <h3>Featured Abayas</h3>
+        <p class="muted">Designed for movement, comfort, and timeless modest style.</p>
+      </div>
+      <div class="cards" id="abaya-grid">
+        <article class="card">
+          <img src="black abaya.png" alt="Black abaya" />
+          <span class="chip">New</span>
+          <h4>Midnight Flow Abaya</h4>
+          <p class="muted">Soft premium crepe with subtle cuff detail.</p>
+          <p class="price">$35</p>
+        </article>
+        <article class="card">
+          <img src="cream colorway.png" alt="Cream abaya" />
+          <span class="chip">Best Seller</span>
+          <h4>Sand Open Abaya</h4>
+          <p class="muted">Layer-ready open design with clean tailoring.</p>
+          <p class="price">$38</p>
+        </article>
+        <article class="card">
+          <img src="emerald green abaya.png" alt="Emerald green abaya" />
+          <span class="chip">Limited</span>
+          <h4>Ember Stitch Abaya</h4>
+          <p class="muted">Hand-finished sleeve embroidery and fluid cut.</p>
+          <p class="price">$42</p>
+        </article>
+        <article class="card">
+          <img src="white abaya.png" alt="White abaya" />
+          <span class="chip">Classic</span>
+          <h4>Noir Signature Abaya</h4>
+          <p class="muted">Elegant full-length silhouette with hidden pockets.</p>
+          <p class="price">$34</p>
+        </article>
+        <article class="card extra-abaya">
+          <img src="navy blue.png" alt="Navy blue abaya" />
+          <span class="chip">New</span>
+          <h4>Navy Luxe Abaya</h4>
+          <p class="muted">Deep navy tone with fluid premium fall.</p>
+          <p class="price">$36</p>
+        </article>
+        <article class="card extra-abaya">
+          <img src="pink abaya.png" alt="Pink abaya" />
+          <span class="chip">Popular</span>
+          <h4>Blush Grace Abaya</h4>
+          <p class="muted">Elegant soft pink style for standout modest wear.</p>
+          <p class="price">$37</p>
+        </article>
+        <article class="card extra-abaya">
+          <img src="purple.png" alt="Purple abaya" />
+          <span class="chip">Limited</span>
+          <h4>Royal Plum Abaya</h4>
+          <p class="muted">Bold purple palette with clean tailored lines.</p>
+          <p class="price">$41</p>
+        </article>
+        <article class="card extra-abaya">
+          <img src="red.png" alt="Red abaya" />
+          <span class="chip">Premium</span>
+          <h4>Ruby Statement Abaya</h4>
+          <p class="muted">Rich red fabric crafted for occasion elegance.</p>
+          <p class="price">$45</p>
+        </article>
+        <article class="card extra-abaya">
+          <img src="sky blue.png" alt="Sky blue abaya" />
+          <span class="chip">Fresh</span>
+          <h4>Sky Serenity Abaya</h4>
+          <p class="muted">Light sky blue finish with breathable comfort.</p>
+          <p class="price">$39</p>
+        </article>
+      </div>
+      <div class="view-all-wrap">
+        <button class="btn btn-view-all" id="abaya-view-all-btn" type="button">View All</button>
+      </div>
+    </section>
+
+    <section id="hijabs" style="margin-top: 30px;">
+      <div class="section-head">
+        <h3>Featured Hijabs</h3>
+        <p class="muted">Elegant hijab styles in rich tones and everyday premium fabrics.</p>
+      </div>
+      <div class="cards">
+        <article class="card">
+          <img src="blue & black hijab.png" alt="Blue and black hijab" />
+          <span class="chip">New</span>
+          <h4>Midnight Blend Hijab</h4>
+          <p class="muted">Two-tone blue and black for bold contrast.</p>
+          <p class="price">$55</p>
+        </article>
+        <article class="card">
+          <img src="green hijab.png" alt="Green hijab" />
+          <span class="chip">New</span>
+          <h4>Emerald Breeze Hijab</h4>
+          <p class="muted">Fresh green shade with breathable comfort.</p>
+          <p class="price">$48</p>
+        </article>
+        <article class="card">
+          <img src="purple & cream hijab.png" alt="Purple and cream hijab" />
+          <span class="chip">Popular</span>
+          <h4>Dual Tone Hijab</h4>
+          <p class="muted">Purple and cream blend for standout styling.</p>
+          <p class="price">$44</p>
+        </article>
+        <article class="card">
+          <img src="red hijab.png" alt="Red hijab" />
+          <span class="chip">Premium</span>
+          <h4>Ruby Luxe Hijab</h4>
+          <p class="muted">Rich red tone with graceful all-day flow.</p>
+          <p class="price">$62</p>
+        </article>
+        <article class="card extra-hijab">
+          <img src="blue hijab.png" alt="Blue hijab" />
+          <span class="chip">Occasion</span>
+          <h4>Azure Silk Hijab</h4>
+          <p class="muted">Smooth drape with a soft satin finish.</p>
+          <p class="price">$50</p>
+        </article>
+        <article class="card extra-hijab">
+          <img src="purple hijab.png" alt="Purple hijab" />
+          <span class="chip">Popular</span>
+          <h4>Amethyst Soft Hijab</h4>
+          <p class="muted">Elegant purple drape for daily styling.</p>
+          <p class="price">$46</p>
+        </article>
+        <article class="card extra-hijab">
+          <img src="white hijab.png" alt="White hijab" />
+          <span class="chip">Classic</span>
+          <h4>Pure White Hijab</h4>
+          <p class="muted">Clean white essential with premium texture.</p>
+          <p class="price">$42</p>
+        </article>
+      </div>
+      <div class="view-all-wrap">
+        <button class="btn btn-view-all" id="hijab-view-all-btn" type="button">View All</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Naima Design | Abayas & Hijabs
+  </footer>
+
+  <div class="product-modal" id="product-modal">
+    <div class="product-modal-box">
+      <h4 id="modal-product-name">Product</h4>
+      <p class="muted" id="modal-product-price">$0</p>
+      <p class="muted" id="modal-product-desc"></p>
+      <div class="modal-actions">
+        <button class="btn btn-main" id="buy-now-btn" type="button">Buy Now</button>
+        <button class="btn btn-alt" id="add-to-cart-btn" type="button">Add to Cart</button>
+        <button class="btn btn-view-all" id="close-product-modal-btn" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-head">
+      <h4>Your Cart</h4>
+      <button class="close-btn" id="cart-close-btn" type="button">Close</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-foot">
+      <p><strong>Total: </strong><span id="cart-total">$0</span></p>
+      <div class="modal-actions">
+        <button class="btn btn-main" id="checkout-btn" type="button">Checkout</button>
+      </div>
+    </div>
+    <div class="purchased-wrap">
+      <p><strong>Purchased</strong></p>
+      <div id="purchased-items"><p class="muted">No purchased items yet.</p></div>
+    </div>
+  </aside>
+
+  <script>
+    const abayaViewAllBtn = document.getElementById("abaya-view-all-btn");
+    const extraAbayas = document.querySelectorAll(".extra-abaya");
+    const hijabViewAllBtn = document.getElementById("hijab-view-all-btn");
+    const extraHijabs = document.querySelectorAll(".extra-hijab");
+    const productCards = document.querySelectorAll(".card");
+    const productModal = document.getElementById("product-modal");
+    const modalProductName = document.getElementById("modal-product-name");
+    const modalProductPrice = document.getElementById("modal-product-price");
+    const modalProductDesc = document.getElementById("modal-product-desc");
+    const addToCartBtn = document.getElementById("add-to-cart-btn");
+    const buyNowBtn = document.getElementById("buy-now-btn");
+    const closeProductModalBtn = document.getElementById("close-product-modal-btn");
+    const cartOpenBtn = document.getElementById("cart-open-btn");
+    const cartCloseBtn = document.getElementById("cart-close-btn");
+    const cartDrawer = document.getElementById("cart-drawer");
+    const cartItemsEl = document.getElementById("cart-items");
+    const cartTotalEl = document.getElementById("cart-total");
+    const checkoutBtn = document.getElementById("checkout-btn");
+    const purchasedItemsEl = document.getElementById("purchased-items");
+    const CART_STORAGE_KEY = "naima_cart";
+    const PURCHASED_STORAGE_KEY = "naima_purchased";
+    const WHATSAPP_NUMBER = "252637762739";
+    let abayaExpanded = false;
+    let hijabExpanded = false;
+    let selectedProduct = null;
+    const cart = [];
+    const purchased = [];
+
+    abayaViewAllBtn.addEventListener("click", () => {
+      abayaExpanded = !abayaExpanded;
+      extraAbayas.forEach((item) => item.classList.toggle("show", abayaExpanded));
+      abayaViewAllBtn.textContent = abayaExpanded ? "View Less" : "View All";
+    });
+
+    hijabViewAllBtn.addEventListener("click", () => {
+      hijabExpanded = !hijabExpanded;
+      extraHijabs.forEach((item) => item.classList.toggle("show", hijabExpanded));
+      hijabViewAllBtn.textContent = hijabExpanded ? "View Less" : "View All";
+    });
+
+    function getPriceNumber(priceText) {
+      return Number(priceText.replace("$", "").trim()) || 0;
+    }
+
+    function saveState() {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+      localStorage.setItem(PURCHASED_STORAGE_KEY, JSON.stringify(purchased));
+    }
+
+    function loadState() {
+      try {
+        const savedCart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+        const savedPurchased = JSON.parse(localStorage.getItem(PURCHASED_STORAGE_KEY) || "[]");
+        if (Array.isArray(savedCart)) {
+          cart.splice(0, cart.length, ...savedCart);
+        }
+        if (Array.isArray(savedPurchased)) {
+          purchased.splice(0, purchased.length, ...savedPurchased);
+        }
+      } catch (error) {
+        localStorage.removeItem(CART_STORAGE_KEY);
+        localStorage.removeItem(PURCHASED_STORAGE_KEY);
+      }
+    }
+
+    function renderCart() {
+      cartItemsEl.innerHTML = "";
+      if (!cart.length) {
+        cartItemsEl.innerHTML = "<p class='muted'>Your cart is empty.</p>";
+      }
+
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        const itemEl = document.createElement("article");
+        itemEl.className = "cart-item";
+        itemEl.innerHTML = `
+          <h5>${item.name}</h5>
+          <p class="muted">$${item.price} each</p>
+          <div class="cart-item-row">
+            <div class="qty-controls">
+              <button class="qty-btn" data-action="decrease" data-index="${index}" type="button">-</button>
+              <span>${item.qty}</span>
+              <button class="qty-btn" data-action="increase" data-index="${index}" type="button">+</button>
+            </div>
+            <button class="qty-btn" data-action="remove" data-index="${index}" type="button">Remove</button>
+          </div>
+        `;
+        cartItemsEl.appendChild(itemEl);
+      });
+
+      cartTotalEl.textContent = `$${total}`;
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      cartOpenBtn.textContent = `Cart (${count})`;
+      saveState();
+    }
+
+    function renderPurchased() {
+      purchasedItemsEl.innerHTML = "";
+      if (!purchased.length) {
+        purchasedItemsEl.innerHTML = "<p class='muted'>No purchased items yet.</p>";
+        return;
+      }
+      purchased.forEach((item) => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "purchased-item";
+        itemEl.innerHTML = `
+          <strong>${item.name}</strong>
+          <p class="muted">Qty: ${item.qty} | Total: $${item.total}</p>
+          <p class="muted">Status: Purchased</p>
+        `;
+        purchasedItemsEl.appendChild(itemEl);
+      });
+      saveState();
+    }
+
+    function openWhatsAppOrder(lines) {
+      const message = encodeURIComponent(lines.join("\n"));
+      const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
+      const opened = window.open(url, "_blank");
+      if (!opened) {
+        window.location.href = url;
+      }
+    }
+
+    function setModalOpen(isOpen) {
+      productModal.classList.toggle("show", isOpen);
+      document.body.classList.toggle("no-scroll", isOpen || cartDrawer.classList.contains("show"));
+    }
+
+    function setCartOpen(isOpen) {
+      cartDrawer.classList.toggle("show", isOpen);
+      document.body.classList.toggle("no-scroll", isOpen || productModal.classList.contains("show"));
+    }
+
+    productCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const name = card.querySelector("h4")?.textContent?.trim() || "Product";
+        const desc = card.querySelector(".muted")?.textContent?.trim() || "";
+        const priceText = card.querySelector(".price")?.textContent?.trim() || "$0";
+        selectedProduct = { name, desc, price: getPriceNumber(priceText) };
+        modalProductName.textContent = name;
+        modalProductDesc.textContent = desc;
+        modalProductPrice.textContent = priceText;
+        setModalOpen(true);
+      });
+    });
+
+    closeProductModalBtn.addEventListener("click", () => {
+      setModalOpen(false);
+    });
+
+    productModal.addEventListener("click", (event) => {
+      if (event.target === productModal) {
+        setModalOpen(false);
+      }
+    });
+
+    addToCartBtn.addEventListener("click", () => {
+      if (!selectedProduct) return;
+      const existing = cart.find((item) => item.name === selectedProduct.name);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...selectedProduct, qty: 1 });
+      }
+      renderCart();
+      setModalOpen(false);
+    });
+
+    buyNowBtn.addEventListener("click", () => {
+      if (!selectedProduct) return;
+      purchased.unshift({
+        name: selectedProduct.name,
+        qty: 1,
+        total: selectedProduct.price
+      });
+      renderPurchased();
+      setModalOpen(false);
+      openWhatsAppOrder([
+        "Naima Design Order",
+        `Product: ${selectedProduct.name}`,
+        "Quantity: 1",
+        `Amount: $${selectedProduct.price}`,
+        `Total Amount: $${selectedProduct.price}`,
+        "Status: Purchased"
+      ]);
+    });
+
+    cartOpenBtn.addEventListener("click", () => {
+      setCartOpen(true);
+    });
+
+    cartCloseBtn.addEventListener("click", () => {
+      setCartOpen(false);
+    });
+
+    cartItemsEl.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const action = target.dataset.action;
+      const index = Number(target.dataset.index);
+      if (!action || Number.isNaN(index) || !cart[index]) return;
+
+      if (action === "increase") cart[index].qty += 1;
+      if (action === "decrease") cart[index].qty -= 1;
+      if (action === "remove" || cart[index].qty <= 0) cart.splice(index, 1);
+
+      renderCart();
+    });
+
+    checkoutBtn.addEventListener("click", () => {
+      const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      if (!cart.length) {
+        return;
+      }
+      const checkoutLines = [
+        "Naima Design Checkout",
+        ...cart.map((item) => `- ${item.name} | Qty: ${item.qty} | Amount: $${item.price * item.qty}`),
         `Total Amount: $${total}`
       ];
       cart.forEach((item) => {
