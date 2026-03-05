@@ -954,8 +954,11 @@
 
     function openWhatsAppOrder(lines) {
       const message = encodeURIComponent(lines.join("\n"));
-      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-      window.location.href = url;
+      const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
+      const opened = window.open(url, "_blank");
+      if (!opened) {
+        window.location.href = url;
+      }
     }
 
     function setModalOpen(isOpen) {
@@ -1001,7 +1004,6 @@
       }
       renderCart();
       setModalOpen(false);
-      setCartOpen(true);
     });
 
     buyNowBtn.addEventListener("click", () => {
@@ -1018,6 +1020,7 @@
         `Product: ${selectedProduct.name}`,
         "Quantity: 1",
         `Amount: $${selectedProduct.price}`,
+        `Total Amount: $${selectedProduct.price}`,
         "Status: Purchased"
       ]);
     });
@@ -1064,6 +1067,7 @@
       cart.splice(0, cart.length);
       renderCart();
       renderPurchased();
+      saveState();
       openWhatsAppOrder(checkoutLines);
     });
 
