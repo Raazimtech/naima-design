@@ -543,19 +543,10 @@
       font-size: 0.95rem;
     }
 
-    @media (max-width: 960px) {
-      .topbar {
-        position: sticky;
-      }
-
+    @media (max-width: 1024px) {
       .hero {
         grid-template-columns: 1fr;
-        margin-top: 0;
         min-height: auto;
-      }
-
-      .hero-left {
-        min-height: 420px;
       }
 
       .cards {
@@ -563,18 +554,13 @@
       }
     }
 
-    @media (max-width: 560px) {
+    @media (max-width: 640px) {
       .topbar {
         padding: 10px 12px;
       }
 
-      .brand {
-        width: 100%;
-      }
-
       .nav {
         width: 100%;
-        justify-content: flex-start;
       }
 
       .nav a {
@@ -588,24 +574,6 @@
 
       .cards {
         grid-template-columns: 1fr;
-      }
-
-      .hero-left {
-        padding: 24px;
-      }
-
-      .logo-box {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .cart-drawer {
-        width: 100%;
-        right: -100%;
-      }
-
-      .modal-actions .btn {
-        flex: 1 1 100%;
       }
     }
 
