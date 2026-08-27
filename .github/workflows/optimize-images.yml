@@ -20,7 +20,7 @@ jobs:
       - name: Install image tools
         run: sudo apt-get update && sudo apt-get install -y imagemagick webp
 
-      - name: Convert referenced PNG images to WebP
+      - name: Optimize referenced storefront images
         shell: bash
         run: |
           set -euo pipefail
@@ -29,25 +29,50 @@ jobs:
           import subprocess
           from pathlib import Path
 
-          html = Path('index.html').read_text(encoding='utf-8')
-          refs = set(re.findall(r'(?:(?:src|content)=\"|url\()([^\"\')]+\.png)', html, flags=re.I))
-          refs = {r for r in refs if Path(r).name not in {'logo.png', 'favicon.png'} and not r.startswith('http')}
+          html_path = Path('index.html')
+          html = html_path.read_text(encoding='utf-8')
+
+          # Convert local PNG assets referenced by the page to compact WebP assets.
+          refs = set(re.findall(r'(?:(?:src|content)=[\"\']|url\()([^\"\')]+\.png)', html, flags=re.I))
+          refs = {r for r in refs if Path(r).name not in {'logo.png', 'favicon.png'} and not r.startswith(('http://','https://'))}
 
           for ref in sorted(refs):
               src = Path(ref)
-              if src.exists():
-                  dst = src.with_suffix('.webp')
-                  print(f'Optimizing {src} -> {dst}')
-                  subprocess.run([
-                      'convert', str(src), '-strip', '-resize', '1800x1800>',
-                      '-define', 'webp:method=6', '-quality', '82', str(dst)
-                  ], check=True)
-                  html = html.replace(ref, str(dst).replace('\\', '/'))
+              if not src.exists():
+                  continue
+              dst = src.with_suffix('.webp')
+              subprocess.run([
+                  'convert', str(src), '-strip', '-resize', '1800x1800>',
+                  '-define', 'webp:method=6', '-quality', '82', str(dst)
+              ], check=True)
+              html = html.replace(ref, dst.as_posix())
 
-          Path('index.html').write_text(html, encoding='utf-8')
+          # The hero is the only image that should compete for first-paint bandwidth.
+          # Product/category imagery is lazy + async so the initial viewport stays fast.
+          html = re.sub(r'<img([^>]*class=[\"\'][^\"\']*hero-image[^\"\']*[\"\'][^>]*)>',
+                        lambda m: re.sub(r'\s(?:loading|decoding|fetchpriority)=[\"\'][^\"\']*[\"\']', '', m.group(0))[:-1] + ' fetchpriority="high" decoding="async">',
+                        html, flags=re.I)
+
+          def optimize_img(match):
+              tag = match.group(0)
+              if 'hero-image' in tag or 'logo.png' in tag or 'favicon.png' in tag:
+                  return tag
+              tag = re.sub(r'\sloading=[\"\'][^\"\']*[\"\']', '', tag, flags=re.I)
+              tag = re.sub(r'\sdecoding=[\"\'][^\"\']*[\"\']', '', tag, flags=re.I)
+              tag = re.sub(r'\sfetchpriority=[\"\'][^\"\']*[\"\']', '', tag, flags=re.I)
+              return tag[:-1] + ' loading="lazy" decoding="async">'
+
+          html = re.sub(r'<img\b[^>]*>', optimize_img, html, flags=re.I)
+
+          # Explicitly preload the LCP/hero image. Do not preload the product grid.
+          if 'rel="preload"' not in html or 'href="hero.webp"' not in html:
+              preload = '  <link rel="preload" as="image" href="hero.webp" fetchpriority="high">\n'
+              html = html.replace('</head>', preload + '</head>', 1)
+
+          html_path.write_text(html, encoding='utf-8')
           PY
 
-      - name: Commit optimized assets
+      - name: Commit optimized assets and loading fixes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -56,5 +81,5 @@ jobs:
             echo "No image optimization changes needed."
             exit 0
           fi
-          git commit -m "Serve optimized WebP storefront images"
+          git commit -m "Fix storefront image loading performance"
           git push
